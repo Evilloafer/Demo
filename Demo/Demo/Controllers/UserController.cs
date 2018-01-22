@@ -6,13 +6,17 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Demo.Models;
+using PagedList;
 
 namespace Demo.Controllers
 {
     public class UserController : Controller
     {
         private DemoEntities db = new DemoEntities();
-        private static string printCode;
+        /// <summary>
+        /// 随机生成的验证码
+        /// </summary>
+        private static string printCode = String.Empty;
 
         //
         // GET: /User/
@@ -55,11 +59,23 @@ namespace Demo.Controllers
             return Json(result,JsonRequestBehavior.AllowGet);
         }
 
+        private List<userInfo> getUserInfos(int pageIndex, int pageSize, ref int totalCount)
+        {
+            var users = (from user in db.userInfo orderby user.id descending select user).Skip((pageIndex - 1) * pageSize).Take(pageSize);
+            totalCount = db.userInfo.Count();
+            return users.ToList();
+        }
+
         //
         // GET: /User/ShowUserInfo
-        public ActionResult ShowUserInfo()
+        public ActionResult ShowUserInfo(int? page)
         {
-            return View(db.userInfo.ToList());
+            int pageIndex = page ?? 1;
+            int pageSize = 3;
+            int totalCount = 0;
+            var users = getUserInfos(pageIndex, pageSize,ref totalCount);
+            var usersAsPageList = new StaticPagedList<userInfo>(users, pageIndex, pageSize, totalCount);
+            return View(usersAsPageList);
         }
 
         //

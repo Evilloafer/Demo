@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Demo.Models.userInfo>
+﻿@using PagedList
+@using PagedList.Mvc
+@model  IEnumerable<Demo.Models.userInfo>
 
 @{
     ViewBag.Title = "用户信息";
@@ -50,3 +52,4 @@
         </tr>
     }
 </table>
+@Html.PagedListPager((IPagedList) Model, page => Url.Action("ShowUserInfo", new { page=page }),new PagedListRenderOptions { LinkToFirstPageFormat = "首页", LinkToNextPageFormat = "下一页", LinkToPreviousPageFormat = "上一页", LinkToLastPageFormat = "末页", MaximumPageNumbersToDisplay = 2, DisplayItemSliceAndTotal = false })  
