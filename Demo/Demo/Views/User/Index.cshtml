@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "登录";
+}
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/jquery-3.2.1.min.js"></script>
+<style type="text/css">
+    tr {
+        line-height:50px;
+    }
+    td {
+        text-align:right;
+    }
+</style>
+<script type="text/javascript">
+    $(function() {
+        $("#switchCode").click(function () {
+            $("#imgCode").attr("src", "/User/GetAuthCode?time=" + Math.random());
+        });
+    });
+    function login() {
+        var name = $("#name").val();
+        var pwd = $("#pwd").val();
+        var code = $("#code").val();
+        $.ajax({
+            url: "/User/CheckCode",
+            type:"POST"
+        });
+        $.ajax({
+            url: "/User/CheckLogin",
+            type: "POST",
+            dataType: "json",
+            data: { name: name, pwd: pwd, code:code },
+            success: function(data) {
+                if (data) {
+                    alert("登陆成功！");
+                    window.location.href = "/User/ShowUserInfo";
+                } else {
+                    alert("用户名、密码或验证码错误！");
+                }
+            }
+        });
+    }
+</script>
+<form class="form-horizontal" role="form">
+    <table style="width:500px;height:auto;margin:0 auto;">
+        <caption><h2>登录</h2></caption>
+        <tr>
+            <td>用户名：</td>
+            <td><input type="text" class="form-control" id="name" 
+				   placeholder="请输入用户名"/></td>
+        </tr>
+        <tr>
+            <td>密码：</td>
+            <td><input type="password" class="form-control" id="pwd" 
+                       placeholder="请输入密码"/></td>
+        </tr>
+        <tr>
+            <td>验证码：</td>
+            <td class="input-group">
+                <input type="text" class="form-control" id="code" placeholder="请输入验证码" >
+                <span class="input-group-addon">
+                    看不清？<a id="switchCode" href="javascript:void(0);" style="text-decoration: none">换一张</a>
+                    <img id="imgCode" src="~/User/GetAuthCode" width="80" height="20" alt="换一个"/>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align:center">
+                <button type="button" onclick="login()" class="btn btn-primary btn-lg btn-block">登录</button>
+            </td>
+        </tr>
+    </table>
+</form>
